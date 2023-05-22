@@ -6,10 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.rickandmortyapp.ui.screens.HomeScreen
+import com.example.rickandmortyapp.ui.screens.HomeViewModel
 import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -22,25 +22,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    val viewModel: HomeViewModel = viewModel(factory = HomeViewModel.Factory)
+                    val bookshelfViewModel: HomeViewModel = viewModel()
+                    HomeScreen(bookshelfViewModel.appUiState)
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello Rick",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RickAndMortyAppTheme {
-        Greeting("Android")
     }
 }
