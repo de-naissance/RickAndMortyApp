@@ -4,14 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.rickandmortyapp.AppApplication
 import com.example.rickandmortyapp.data.AppRepository
 import com.example.rickandmortyapp.network.CharacterRequest
+import com.example.rickandmortyapp.network.ResultCharacter
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
@@ -24,6 +20,10 @@ sealed interface AppUiState {
 class HomeViewModel(
     private val appRepository: AppRepository
 ): ViewModel() {
+
+    /**
+     * Изменяемое состояние, в котором хранится статус самого последнего запроса
+     */
     var appUiState: AppUiState by mutableStateOf(AppUiState.Loading)
         private set
 

@@ -1,6 +1,6 @@
 package com.example.rickandmortyapp.network
 
-data class Result(
+data class ResultCharacter(
     val created: String,
     val episode: List<String>,
     val gender: String,
