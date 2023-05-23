@@ -44,14 +44,5 @@ class HomeViewModel(
         }
     }
 
-    companion object AppViewModelProvider {
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val application = (this[APPLICATION_KEY] as AppApplication)
-                val appRepository = application.container.appRepository
-                HomeViewModel(appRepository = appRepository)
-            }
-        }
-    }
 }
 

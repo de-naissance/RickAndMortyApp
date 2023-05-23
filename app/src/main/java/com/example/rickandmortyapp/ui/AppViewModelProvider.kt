@@ -6,7 +6,6 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.rickandmortyapp.AppApplication
 import com.example.rickandmortyapp.ui.screens.HomeViewModel
 
-/*
 object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
@@ -15,4 +14,4 @@ object AppViewModelProvider {
             HomeViewModel(appRepository = appRepository)
         }
     }
-}*/
+}

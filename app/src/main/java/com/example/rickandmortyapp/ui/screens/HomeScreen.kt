@@ -13,7 +13,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.network.Info
+import com.example.rickandmortyapp.ui.navigation.NavigationDestination
 
+object HomeDestination : NavigationDestination {
+    override val route = "home"
+    override val titleRes = R.string.app_name
+}
 @Composable
 fun HomeScreen(
     appUiState: AppUiState,
