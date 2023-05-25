@@ -6,14 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortyapp.data.AppRepository
-import com.example.rickandmortyapp.network.CharacterRequest
 import com.example.rickandmortyapp.network.ResultCharacter
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
 
 sealed interface AppUiState {
-    data class Success(val characterRequest: CharacterRequest) : AppUiState
+    data class Success(val characterRequest: List<ResultCharacter>) : AppUiState
     object Error : AppUiState
     object Loading : AppUiState
 }
@@ -35,7 +34,9 @@ class HomeViewModel(
         viewModelScope.launch {
             appUiState = AppUiState.Loading
             appUiState = try {
-                AppUiState.Success(appRepository.getCharacter())
+                val characterRequest = appRepository.getCharacter()
+                val characters = characterRequest.results
+                AppUiState.Success(characters)
             } catch (e: IOException) {
                 AppUiState.Error
             } catch (e: HttpException) {
@@ -45,4 +46,6 @@ class HomeViewModel(
     }
 
 }
+
+
 
