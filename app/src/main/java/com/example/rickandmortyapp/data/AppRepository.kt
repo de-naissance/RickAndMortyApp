@@ -2,9 +2,12 @@ package com.example.rickandmortyapp.data
 
 import com.example.rickandmortyapp.network.ApiServer
 import com.example.rickandmortyapp.network.CharacterRequest
+import com.example.rickandmortyapp.network.ResultCharacter
 
 interface AppRepository {
     suspend fun getCharacter(): CharacterRequest
+
+    suspend fun getSelectedCharacter(id: Int): ResultCharacter
 }
 
 class NetworkRepository(
@@ -14,4 +17,7 @@ class NetworkRepository(
         return appApiRepository.getCharacter()
     }
 
+    override suspend fun getSelectedCharacter(id: Int): ResultCharacter {
+        return appApiRepository.getSelectedCharacter(id)
+    }
 }
