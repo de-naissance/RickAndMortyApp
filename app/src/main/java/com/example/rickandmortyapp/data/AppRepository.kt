@@ -1,5 +1,6 @@
 package com.example.rickandmortyapp.data
 
+import android.util.Log
 import com.example.rickandmortyapp.network.ApiServer
 import com.example.rickandmortyapp.network.CharacterRequest
 import com.example.rickandmortyapp.network.ResultCharacter
@@ -18,6 +19,7 @@ class NetworkRepository(
     }
 
     override suspend fun getSelectedCharacter(id: Int): ResultCharacter {
+        Log.e("SelectedCharacterId", "$id")
         return appApiRepository.getSelectedCharacter(id)
     }
 }
