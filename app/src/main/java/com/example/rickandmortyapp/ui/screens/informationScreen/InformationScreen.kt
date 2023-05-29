@@ -1,7 +1,6 @@
 package com.example.rickandmortyapp.ui.screens.informationScreen
 
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +12,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,18 +30,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.network.Location
 import com.example.rickandmortyapp.network.Origin
 import com.example.rickandmortyapp.network.ResultCharacter
-import com.example.rickandmortyapp.ui.AppUiState
-import com.example.rickandmortyapp.ui.AppViewModelProvider
-import com.example.rickandmortyapp.ui.CardScreen
 import com.example.rickandmortyapp.ui.ErrorScreen
 import com.example.rickandmortyapp.ui.LoadingScreen
 import com.example.rickandmortyapp.ui.RickAndMortyTopAppBar
@@ -56,7 +58,6 @@ fun InformationScreen(
     characterUiState: CharacterUiState,
     modifier: Modifier = Modifier,
 ) {
-
     Scaffold(
         topBar = {
             RickAndMortyTopAppBar(
@@ -66,7 +67,7 @@ fun InformationScreen(
             )
         }
     ) {
-        innerPadding ->
+            innerPadding ->
         when (characterUiState) {
             is CharacterUiState.Loading -> LoadingScreen(modifier.padding(innerPadding))
             is CharacterUiState.Success -> Information(
@@ -102,13 +103,12 @@ fun Information(
         )
 
         DetailInformation(
-            name = character.name,
             status = character.status,
             gender = character.gender,
             species = character.species,
             type = character.type,
             origin = character.origin,
-            location = character.location
+            location = character.location,
         )
 
     }
@@ -116,7 +116,6 @@ fun Information(
 
 @Composable
 fun DetailInformation(
-    name: String,
     status: String,
     gender: String,
     species: String,
@@ -125,74 +124,97 @@ fun DetailInformation(
     location: Location,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.padding(10.dp)
-    ) {
-        Text(
-            text = name
-            )
+    var state by remember { mutableStateOf(0) }
+    val titles = listOf("About", "Episodes")
 
-        Text(
-            text = "Available character information",
-            modifier = Modifier,
-        )
-        Divider()
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+    Card(
+        modifier = modifier
+            .fillMaxSize(1f)
+            .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)),
+    ){
+        Column(
+            modifier = modifier.padding(top = 20.dp)
         ) {
-            Text(
-                text = "Status"
-            )
-            StatusIcon(status = status)
-        }
-        Divider()
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(text = "Gender")
-            Text(text = gender)
-        }
-        Divider()
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(text = "Species")
-            Text(text = species)
-        }
-        if (type.isNotEmpty()) {
-            Divider()
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = "Available character information",
+                    modifier = Modifier,
+                )
+            }
+
+            TabRow(
+                selectedTabIndex = state,
+                modifier = modifier.fillMaxWidth()
+            ) {
+                titles.forEachIndexed { index, title ->
+                    Tab(
+                        selected = state == index,
+                        onClick = { state = index },
+                        text = { Text(text = title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                    )
+                }
+            }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Type")
-                Text(text = type)
+                Text(
+                    text = "Status"
+                )
+                StatusIcon(status = status)
             }
-        }
-        Divider()
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(text = "Origin")
-            Text(text = origin.name)
-        }
-        Divider()
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "Last known location:")
-            Text(text = location.name)
-        }
-        Divider()
-        Column(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(text = "First seen in:")
-            Text(text = location.name)
+            Divider(modifier = Modifier.padding(vertical = 6.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = "Gender")
+                Text(text = gender)
+            }
+            Divider(modifier = Modifier.padding(vertical = 6.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = "Species")
+                Text(text = species)
+            }
+            if (type.isNotEmpty()) {
+                Divider(modifier = Modifier.padding(vertical = 6.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = "Type")
+                    Text(text = type)
+                }
+            }
+            Divider(modifier = Modifier.padding(vertical = 6.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = "Origin")
+                Text(text = origin.name)
+            }
+            Divider(modifier = Modifier.padding(vertical = 6.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "Last known location:")
+                Text(text = location.name)
+            }
+            Divider(modifier = Modifier.padding(vertical = 6.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = "First seen in:")
+                Text(text = location.name)
+            }
         }
     }
 }
@@ -231,7 +253,7 @@ fun StatusIcon(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 fun TestHome() {
     val listCharacter = List(10
