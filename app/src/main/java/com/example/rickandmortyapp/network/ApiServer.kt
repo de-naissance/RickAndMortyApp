@@ -10,4 +10,7 @@ interface ApiServer {
 
     @GET("api/character")
     suspend fun getCharacter(): CharacterRequest
+
+    @GET("api/episode/{id}")
+    suspend fun getEpisode(@Path("id") id: Int): Episode
 }

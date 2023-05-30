@@ -1,7 +1,21 @@
 package com.example.rickandmortyapp.ui.screens.informationScreen
 
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,7 +24,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
@@ -29,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -102,26 +120,17 @@ fun Information(
             alignment = Alignment.Center
         )
 
-        DetailInformation(
-            status = character.status,
-            gender = character.gender,
-            species = character.species,
-            type = character.type,
-            origin = character.origin,
-            location = character.location,
+        CardInformation(
+            character = character
         )
 
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun DetailInformation(
-    status: String,
-    gender: String,
-    species: String,
-    type: String,
-    origin: Origin,
-    location: Location,
+fun CardInformation(
+    character: ResultCharacter,
     modifier: Modifier = Modifier
 ) {
     var state by remember { mutableStateOf(0) }
@@ -157,64 +166,104 @@ fun DetailInformation(
                     )
                 }
             }
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Status"
-                )
-                StatusIcon(status = status)
-            }
-            Divider(modifier = Modifier.padding(vertical = 6.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Gender")
-                Text(text = gender)
-            }
-            Divider(modifier = Modifier.padding(vertical = 6.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Species")
-                Text(text = species)
-            }
-            if (type.isNotEmpty()) {
-                Divider(modifier = Modifier.padding(vertical = 6.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(text = "Type")
-                    Text(text = type)
+            AnimatedContent(
+                targetState = state,
+                transitionSpec = {
+                    if (targetState == 0) {
+                        slideInHorizontally() { width -> -width } + fadeIn() with
+                                slideOutHorizontally() { width -> width } + fadeOut()
+                    } else {
+                        slideInHorizontally() { width -> width } + fadeIn() with
+                                slideOutHorizontally { width -> -width } + fadeOut()
+                    }.using(SizeTransform(clip = false))
+                }
+            ) {targetIndex ->
+                when(targetIndex) {
+                    0 -> AboutTab(
+                        status = character.status,
+                        gender = character.gender,
+                        species = character.species,
+                        type = character.type,
+                        origin = character.origin,
+                        location = character.location
+                    )
+                    1 -> EpisodeInformation(character.episode)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun AboutTab(
+    status: String,
+    gender: String,
+    species: String,
+    type: String,
+    origin: Origin,
+    location: Location,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Status"
+            )
+            StatusIcon(status = status)
+        }
+        Divider(modifier = Modifier.padding(vertical = 6.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Gender")
+            Text(text = gender)
+        }
+        Divider(modifier = Modifier.padding(vertical = 6.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Species")
+            Text(text = species)
+        }
+        if (type.isNotEmpty()) {
             Divider(modifier = Modifier.padding(vertical = 6.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Origin")
-                Text(text = origin.name)
+                Text(text = "Type")
+                Text(text = type)
             }
-            Divider(modifier = Modifier.padding(vertical = 6.dp))
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "Last known location:")
-                Text(text = location.name)
-            }
-            Divider(modifier = Modifier.padding(vertical = 6.dp))
-            Column(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = "First seen in:")
-                Text(text = location.name)
-            }
+        }
+        Divider(modifier = Modifier.padding(vertical = 6.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(text = "Origin")
+            Text(text = origin.name)
+        }
+        Divider(modifier = Modifier.padding(vertical = 6.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "Last known location:")
+            Text(text = location.name)
+        }
+        Divider(modifier = Modifier.padding(vertical = 6.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = "First seen in:")
+            Text(text = location.name)
         }
     }
 }
@@ -223,7 +272,11 @@ fun DetailInformation(
 fun EpisodeInformation(
     episode: List<String>
 ) {
-
+    LazyColumn() {
+        items(episode) {
+                Text(text = it, modifier = Modifier.padding(10.dp))
+        }
+    }
 }
 
 @Composable

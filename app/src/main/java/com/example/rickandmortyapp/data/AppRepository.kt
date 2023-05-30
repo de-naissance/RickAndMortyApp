@@ -19,7 +19,6 @@ class NetworkRepository(
     }
 
     override suspend fun getSelectedCharacter(id: Int): ResultCharacter {
-        Log.e("SelectedCharacterId", "$id")
         return appApiRepository.getSelectedCharacter(id)
     }
 }
