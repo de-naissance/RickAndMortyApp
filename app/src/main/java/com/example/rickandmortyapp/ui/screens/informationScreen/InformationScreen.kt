@@ -2,19 +2,13 @@ package com.example.rickandmortyapp.ui.screens.informationScreen
 
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,13 +18,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -46,14 +42,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.rickandmortyapp.R
+import com.example.rickandmortyapp.network.Episode
 import com.example.rickandmortyapp.network.Location
 import com.example.rickandmortyapp.network.Origin
 import com.example.rickandmortyapp.network.ResultCharacter
@@ -61,6 +58,7 @@ import com.example.rickandmortyapp.ui.ErrorScreen
 import com.example.rickandmortyapp.ui.LoadingScreen
 import com.example.rickandmortyapp.ui.RickAndMortyTopAppBar
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
+import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
 import java.util.Locale
 
 object SelectedCharacter : NavigationDestination {
@@ -73,9 +71,11 @@ object SelectedCharacter : NavigationDestination {
 @Composable
 fun InformationScreen(
     navigationBack: () -> Unit,
-    characterUiState: CharacterUiState,
+    //characterUiState: CharacterUiState,
     modifier: Modifier = Modifier,
+    viewModel: InformationViewModel = viewModel()
 ) {
+    val characterUiState = viewModel.characterUiState
     Scaffold(
         topBar = {
             RickAndMortyTopAppBar(
@@ -140,6 +140,9 @@ fun CardInformation(
         modifier = modifier
             .fillMaxSize(1f)
             .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.background
+        )
     ){
         Column(
             modifier = modifier.padding(top = 20.dp)
@@ -156,7 +159,9 @@ fun CardInformation(
 
             TabRow(
                 selectedTabIndex = state,
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 titles.forEachIndexed { index, title ->
                     Tab(
@@ -176,7 +181,8 @@ fun CardInformation(
                         slideInHorizontally() { width -> width } + fadeIn() with
                                 slideOutHorizontally { width -> -width } + fadeOut()
                     }.using(SizeTransform(clip = false))
-                }
+                },
+                modifier = Modifier.padding(top = 12.dp)
             ) {targetIndex ->
                 when(targetIndex) {
                     0 -> AboutTab(
@@ -270,11 +276,27 @@ fun AboutTab(
 
 @Composable
 fun EpisodeInformation(
-    episode: List<String>
+    episodes: List<String>
 ) {
     LazyColumn() {
-        items(episode) {
-                Text(text = it, modifier = Modifier.padding(10.dp))
+        items(episodes) {
+
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EpisodeCard(
+    episode: Episode
+) {
+    Card(
+        onClick = { /*TODO*/ },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(10.dp)) {
+            Text(text = episode.episode)
+            Text(text = episode.name)
         }
     }
 }
@@ -306,7 +328,39 @@ fun StatusIcon(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+)
+@Composable
+fun TestHomeDark() {
+    val listCharacter = List(10
+    ) {
+        ResultCharacter(
+            id = 10,
+            name = "Toxic Rick",
+            status = "Dead",
+            species = "Humanoid",
+            type = "Rick's Toxic Side",
+            gender = "Male",
+            origin = Origin("Alien Spa", "https://rickandmortyapi.com/api/location/64"),
+            location = Location("Earth", "https://rickandmortyapi.com/api/location/20"),
+            image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg",
+            episode = listOf("https://rickandmortyapi.com/api/episode/27"),
+            url = "https://rickandmortyapi.com/api/character/361",
+            created = "2018-01-10T18:20:41.703Z"
+        )
+    }
+    RickAndMortyAppTheme(useDarkTheme = true) {
+        Information(
+            character = listCharacter[0]
+        )
+    }
+}
+@Preview(
+    showBackground = true,
+    showSystemUi = true,
+)
 @Composable
 fun TestHome() {
     val listCharacter = List(10
@@ -326,7 +380,9 @@ fun TestHome() {
             created = "2018-01-10T18:20:41.703Z"
         )
     }
-    Information(
-        character = listCharacter[0]
-    )
+    RickAndMortyAppTheme(useDarkTheme = false) {
+        Information(
+            character = listCharacter[0]
+        )
+    }
 }
