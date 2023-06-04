@@ -4,11 +4,16 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortyapp.data.AppRepository
+import com.example.rickandmortyapp.network.Episode
 import com.example.rickandmortyapp.network.ResultCharacter
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okio.IOException
 import retrofit2.HttpException
@@ -48,4 +53,22 @@ class InformationViewModel(
             }
         }
     }
+
+    fun getEpisode(url: String): LiveData<Episode> {
+        val id = url.substring(url.lastIndexOf('/') + 1).toInt()
+        val episodeLiveData = MutableLiveData<Episode>()
+
+        viewModelScope.launch {
+            try {
+                val episode = appRepository.getEpisode(id = id)
+                episodeLiveData.value = episode
+            } catch (e: IOException) {
+                Log.e("getEpisode", "IOException")
+            } catch (e: HttpException) {
+                Log.e("getEpisode", "HttpException")
+            }
+        }
+        return episodeLiveData
+    }
 }
+
