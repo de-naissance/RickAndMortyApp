@@ -1,6 +1,7 @@
 package com.example.rickandmortyapp.ui.screens.informationScreen
 
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
@@ -15,9 +16,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,7 +35,9 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -57,6 +62,8 @@ import com.example.rickandmortyapp.network.ResultCharacter
 import com.example.rickandmortyapp.ui.ErrorScreen
 import com.example.rickandmortyapp.ui.LoadingScreen
 import com.example.rickandmortyapp.ui.RickAndMortyTopAppBar
+import com.example.rickandmortyapp.ui.components.LoadingEpisodeCard
+import com.example.rickandmortyapp.ui.components.shimmerEffect
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
 import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
 import java.util.Locale
@@ -71,7 +78,6 @@ object SelectedCharacter : NavigationDestination {
 @Composable
 fun InformationScreen(
     navigationBack: () -> Unit,
-    //characterUiState: CharacterUiState,
     modifier: Modifier = Modifier,
     viewModel: InformationViewModel = viewModel()
 ) {
@@ -276,11 +282,23 @@ fun AboutTab(
 
 @Composable
 fun EpisodeInformation(
-    episodes: List<String>
+    episodes: List<String>,
+    viewModel: InformationViewModel = viewModel()
 ) {
     LazyColumn() {
-        items(episodes) {
+        items(episodes) {url ->
+            val episodeState = viewModel.getEpisode(url).observeAsState()
+            var episode by remember { mutableStateOf<Episode?>(null) }
 
+            LaunchedEffect(episodeState.value) {
+                episode = episodeState.value
+            }
+
+            if (episode != null) {
+                EpisodeCard(episode = episode!!)
+            } else {
+                LoadingEpisodeCard(modifier = Modifier.fillMaxWidth())
+            }
         }
     }
 }
@@ -292,7 +310,9 @@ fun EpisodeCard(
 ) {
     Card(
         onClick = { /*TODO*/ },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(6.dp)
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Text(text = episode.episode)
@@ -300,6 +320,8 @@ fun EpisodeCard(
         }
     }
 }
+
+
 
 @Composable
 fun StatusIcon(
