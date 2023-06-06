@@ -33,7 +33,8 @@ fun RickAndMortyNavHost(
                 rickAndMortyViewModel.appUiState,
                 navigateToInformation = {
                     navController.navigate("${SelectedCharacter.route}/$it")
-                }
+                },
+                selectLayout = rickAndMortyViewModel::selectLayout
             )
         }
 

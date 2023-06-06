@@ -3,6 +3,7 @@ package com.example.rickandmortyapp.ui
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,14 +16,23 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.rickandmortyapp.R
@@ -51,8 +62,12 @@ object HomeDestination : NavigationDestination {
 fun HomeScreen(
     appUiState: AppUiState,
     navigateToInformation: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    selectLayout: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: HomeViewModel = viewModel()
 ) {
+    val isLinearLayout = viewModel.uiState.collectAsState().value.isLinearLayout
+
     Scaffold(
         topBar = {
             RickAndMortyTopAppBar(
@@ -61,19 +76,35 @@ fun HomeScreen(
             )
         }
     ) { innerPadding ->
-        when (appUiState) {
-            is AppUiState.Loading -> LoadingScreen(modifier.padding(innerPadding))
-            is AppUiState.Success -> CardScreen(
-                navigateToInformation = navigateToInformation,
-                characterList = appUiState.characterRequest,
-                modifier.padding(innerPadding)
-            )
-            is AppUiState.Error -> ErrorScreen(modifier.padding(innerPadding))
+        Column(modifier = Modifier.padding(innerPadding)) {
+            Button(onClick = { selectLayout(!isLinearLayout) }) {
+                Icon(
+                    imageVector = Icons.Filled.AccountBox,
+                    contentDescription = null
+                )
+            }
+            when (appUiState) {
+                is AppUiState.Loading -> LoadingScreen(modifier.padding(innerPadding))
+                is AppUiState.Success -> if (isLinearLayout) {
+                    CardScreen(
+                        navigateToInformation = navigateToInformation,
+                        characterList = appUiState.characterRequest,
+                        modifier.padding(innerPadding)
+                    )
+                } else {
+                    GridScreen(
+                        navigateToInformation = navigateToInformation,
+                        characterList = appUiState.characterRequest,
+                        modifier.padding(innerPadding))
+                }
+                is AppUiState.Error -> ErrorScreen(modifier.padding(innerPadding))
+            }
         }
 
     }
 
-    /** Попробовать потом реализовать использование DataStore, чтобы менять список на LazyGrid*/
+    /** Попробовать потом реализовать использование DataStore, чтобы менять список на LazyGrid
+     *  и добавить переключение в меню */
 
 }
 
@@ -99,6 +130,61 @@ fun CardScreen(
         }
     }
 }
+
+@Composable
+fun GridScreen(
+    navigateToInformation: (Int) -> Unit,
+    characterList: List<ResultCharacter>,
+    modifier: Modifier = Modifier
+) {
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(180.dp),
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(4.dp)
+    ) {
+        items(
+            items = characterList,
+            key = { character -> character.id }
+        ) {character ->
+            GridCharacterCard(
+                navigateToInformation = navigateToInformation,
+                character = character
+            )
+        }
+    }
+}
+
+@Composable
+fun GridCharacterCard(
+    navigateToInformation: (Int) -> Unit,
+    character: ResultCharacter,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        contentAlignment = Alignment.BottomStart,
+        modifier = modifier
+            .padding(6.dp)
+            .clickable { navigateToInformation(character.id) }
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(context = LocalContext.current)
+                .data(character.image)
+                .crossfade(true)
+                .build(),
+            error = painterResource(id = R.drawable.ic_broken_image),
+            placeholder = painterResource(id = R.drawable.loading_img),
+            contentDescription = character.name,
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(MaterialTheme.shapes.small),
+            contentScale = ContentScale.Crop
+        )
+        Text(
+            text = character.name
+        )
+    }
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -200,7 +286,33 @@ fun StatusIcon(
 
 @Preview
 @Composable
-fun TestHome() {
+fun TestGridScreen() {
+    val listCharacter = List(10
+    ) {
+        ResultCharacter(
+            id = 10,
+            name = "Toxic Rick",
+            status = "Dead",
+            species = "Humanoid",
+            type = "Rick's Toxic Side",
+            gender = "Male",
+            origin = Origin("Alien Spa", "https://rickandmortyapi.com/api/location/64"),
+            location = Location("Earth", "https://rickandmortyapi.com/api/location/20"),
+            image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg",
+            episode = listOf("https://rickandmortyapi.com/api/episode/27"),
+            url = "https://rickandmortyapi.com/api/character/361",
+            created = "2018-01-10T18:20:41.703Z"
+        )
+    }
+    GridScreen(
+        characterList = listCharacter,
+        navigateToInformation = { }
+    )
+}
+
+@Preview
+@Composable
+fun TestCardScreen() {
     val listCharacter = List(10
     ) {
         ResultCharacter(

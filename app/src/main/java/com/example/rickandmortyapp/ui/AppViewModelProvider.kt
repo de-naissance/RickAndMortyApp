@@ -12,7 +12,11 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         initializer {
             val appRepository = appApplication().container.appRepository
-            HomeViewModel(appRepository = appRepository)
+            val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as AppApplication)
+            HomeViewModel(
+                appRepository = appRepository,
+                userPreferencesRepository = application.userPreferencesRepository
+            )
         }
 
         initializer {
