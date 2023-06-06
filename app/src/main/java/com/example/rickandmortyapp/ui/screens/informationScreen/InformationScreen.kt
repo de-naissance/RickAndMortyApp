@@ -16,11 +16,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -60,10 +58,9 @@ import com.example.rickandmortyapp.network.Location
 import com.example.rickandmortyapp.network.Origin
 import com.example.rickandmortyapp.network.ResultCharacter
 import com.example.rickandmortyapp.ui.ErrorScreen
+import com.example.rickandmortyapp.ui.InformationScreenTopAppBar
 import com.example.rickandmortyapp.ui.LoadingScreen
-import com.example.rickandmortyapp.ui.RickAndMortyTopAppBar
 import com.example.rickandmortyapp.ui.components.LoadingEpisodeCard
-import com.example.rickandmortyapp.ui.components.shimmerEffect
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
 import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
 import java.util.Locale
@@ -84,7 +81,7 @@ fun InformationScreen(
     val characterUiState = viewModel.characterUiState
     Scaffold(
         topBar = {
-            RickAndMortyTopAppBar(
+            InformationScreenTopAppBar(
                 title = SelectedCharacter.route,
                 canNavigateBack = true,
                 navigateUp = navigationBack

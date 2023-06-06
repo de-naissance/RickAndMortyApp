@@ -64,41 +64,32 @@ fun HomeScreen(
     navigateToInformation: (Int) -> Unit,
     selectLayout: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = viewModel()
+    layoutUiState: LayoutUiState
 ) {
-    val isLinearLayout = viewModel.uiState.collectAsState().value.isLinearLayout
-
     Scaffold(
         topBar = {
-            RickAndMortyTopAppBar(
+            HomeTopAppBar(
                 title = stringResource(HomeDestination.titleRes),
-                canNavigateBack = false
+                layoutUiState = layoutUiState,
+                selectLayout = selectLayout
             )
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.padding(innerPadding)) {
-            Button(onClick = { selectLayout(!isLinearLayout) }) {
-                Icon(
-                    imageVector = Icons.Filled.AccountBox,
-                    contentDescription = null
+        when (appUiState) {
+            is AppUiState.Loading -> LoadingScreen(modifier.padding(innerPadding))
+            is AppUiState.Success -> if (layoutUiState.isLinearLayout) {
+                CardScreen(
+                    navigateToInformation = navigateToInformation,
+                    characterList = appUiState.characterRequest,
+                    modifier.padding(innerPadding)
                 )
+            } else {
+                GridScreen(
+                    navigateToInformation = navigateToInformation,
+                    characterList = appUiState.characterRequest,
+                    modifier.padding(innerPadding))
             }
-            when (appUiState) {
-                is AppUiState.Loading -> LoadingScreen(modifier.padding(innerPadding))
-                is AppUiState.Success -> if (isLinearLayout) {
-                    CardScreen(
-                        navigateToInformation = navigateToInformation,
-                        characterList = appUiState.characterRequest,
-                        modifier.padding(innerPadding)
-                    )
-                } else {
-                    GridScreen(
-                        navigateToInformation = navigateToInformation,
-                        characterList = appUiState.characterRequest,
-                        modifier.padding(innerPadding))
-                }
-                is AppUiState.Error -> ErrorScreen(modifier.padding(innerPadding))
-            }
+            is AppUiState.Error -> ErrorScreen(modifier.padding(innerPadding))
         }
 
     }

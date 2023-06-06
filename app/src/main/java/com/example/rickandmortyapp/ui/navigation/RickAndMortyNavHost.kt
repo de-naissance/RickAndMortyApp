@@ -1,6 +1,7 @@
 package com.example.rickandmortyapp.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -27,14 +28,15 @@ fun RickAndMortyNavHost(
         modifier = modifier
     ) {
         composable(route = HomeDestination.route) {
-            val rickAndMortyViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+            val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
 
             HomeScreen(
-                rickAndMortyViewModel.appUiState,
+                homeViewModel.appUiState,
                 navigateToInformation = {
                     navController.navigate("${SelectedCharacter.route}/$it")
                 },
-                selectLayout = rickAndMortyViewModel::selectLayout
+                selectLayout = homeViewModel::selectLayout,
+                layoutUiState = homeViewModel.layoutUiState.collectAsState().value
             )
         }
 

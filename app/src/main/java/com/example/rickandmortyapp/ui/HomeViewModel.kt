@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.data.AppRepository
 import com.example.rickandmortyapp.data.UserPreferencesRepository
 import com.example.rickandmortyapp.network.ResultCharacter
@@ -35,6 +36,17 @@ class HomeViewModel(
      */
     var appUiState: AppUiState by mutableStateOf(AppUiState.Loading)
         private set
+    val layoutUiState: StateFlow<LayoutUiState> =
+        userPreferencesRepository.isLinearLayout.map { isLinearLayout ->
+            LayoutUiState(isLinearLayout)
+        }.stateIn(
+            scope = viewModelScope,
+            // Flow is set to emits value for when app is on the foreground
+            // 5 seconds stop delay is added to ensure it flows continuously
+            // for cases such as configuration change
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = LayoutUiState()
+        )
 
     /*
      * [selectLayout] изменяет макет и значки соответствующим образом и
@@ -49,7 +61,6 @@ class HomeViewModel(
     init {
         getCharacter()
     }
-
     private fun getCharacter() {
         viewModelScope.launch {
             appUiState = AppUiState.Loading
@@ -64,26 +75,15 @@ class HomeViewModel(
             }
         }
     }
-    val uiState: StateFlow<DessertReleaseUiState> =
-        userPreferencesRepository.isLinearLayout.map { isLinearLayout ->
-            DessertReleaseUiState(isLinearLayout)
-        }.stateIn(
-            scope = viewModelScope,
-            // Flow is set to emits value for when app is on the foreground
-            // 5 seconds stop delay is added to ensure it flows continuously
-            // for cases such as configuration change
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = DessertReleaseUiState()
-        )
 }
 
 /*
- * Data class containing various UI States for Dessert Release screens
+ * Data class containing various Layout UI States for Home screen
  */
-data class DessertReleaseUiState(
+data class LayoutUiState(
     val isLinearLayout: Boolean = true,
     val toggleContentDescription: String =
         if (isLinearLayout) "Пук" else "Хрюк",
-    val toggleIcon: ImageVector =
-        if (isLinearLayout) Icons.Filled.AccountBox else Icons.Filled.ArrowBack
+    val toggleIcon: Int =
+        if (isLinearLayout) R.drawable.toc else R.drawable.grid_view
 )
