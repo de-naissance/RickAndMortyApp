@@ -4,7 +4,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
@@ -47,7 +49,8 @@ class HomeViewModel(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = LayoutUiState()
         )
-
+    var currentPage by mutableIntStateOf (1)
+    var maxPage by mutableIntStateOf (1)
     /*
      * [selectLayout] изменяет макет и значки соответствующим образом и
      * сохраните выбранное в хранилище данных через  [userPreferencesRepository]
@@ -61,12 +64,17 @@ class HomeViewModel(
     init {
         getCharacter()
     }
-    private fun getCharacter() {
+    fun getCharacter(
+        page: Int? = currentPage
+    ) {
         viewModelScope.launch {
             appUiState = AppUiState.Loading
             appUiState = try {
-                val characterRequest = appRepository.getCharacter()
+                val characterRequest = appRepository.getCharacter(
+                    page = page
+                )
                 val characters = characterRequest.results
+                maxPage = characterRequest.info.pages
                 AppUiState.Success(characters)
             } catch (e: IOException) {
                 AppUiState.Error

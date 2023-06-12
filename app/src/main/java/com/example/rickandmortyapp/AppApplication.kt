@@ -13,6 +13,8 @@ private const val LAYOUT_PREFERENCE_NAME = "layout_preferences"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
     name = LAYOUT_PREFERENCE_NAME
 )
+private const val DARK_MODE_PREFERENCE_NAME = "dark_mode_preferences"
+
 class AppApplication : Application() {
     lateinit var userPreferencesRepository: UserPreferencesRepository
 

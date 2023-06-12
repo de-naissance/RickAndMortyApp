@@ -1,7 +1,6 @@
 package com.example.rickandmortyapp.ui
 
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,25 +13,21 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +37,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -77,26 +73,73 @@ fun HomeScreen(
     ) { innerPadding ->
         when (appUiState) {
             is AppUiState.Loading -> LoadingScreen(modifier.padding(innerPadding))
-            is AppUiState.Success -> if (layoutUiState.isLinearLayout) {
-                CardScreen(
-                    navigateToInformation = navigateToInformation,
-                    characterList = appUiState.characterRequest,
-                    modifier.padding(innerPadding)
-                )
-            } else {
-                GridScreen(
-                    navigateToInformation = navigateToInformation,
-                    characterList = appUiState.characterRequest,
-                    modifier.padding(innerPadding))
-            }
+            is AppUiState.Success -> CharacterScreen(
+                navigateToInformation = navigateToInformation,
+                characterList = appUiState.characterRequest,
+                isLinearLayout = layoutUiState.isLinearLayout,
+                modifier = modifier.padding(innerPadding)
+            )
             is AppUiState.Error -> ErrorScreen(modifier.padding(innerPadding))
         }
 
     }
+}
 
-    /** Попробовать потом реализовать использование DataStore, чтобы менять список на LazyGrid
-     *  и добавить переключение в меню */
+@Composable
+fun CharacterScreen(
+    navigateToInformation: (Int) -> Unit,
+    characterList: List<ResultCharacter>,
+    isLinearLayout: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+    ) {
+        TabPage()
+        if (isLinearLayout) {
+            CardScreen(
+                navigateToInformation = navigateToInformation,
+                characterList = characterList
+            )
+        } else {
+            GridScreen(
+                navigateToInformation = navigateToInformation,
+                characterList = characterList
+            )
+        }
+    }
+}
 
+@Composable
+fun TabPage(
+    viewModel: HomeViewModel = viewModel()
+) {
+    val state = viewModel.currentPage
+    val lst = List(viewModel.maxPage) { it + 1 }
+
+    ScrollableTabRow(
+        selectedTabIndex = state - 1,
+        modifier = Modifier
+            .padding(horizontal = 10.dp)
+            .clip(MaterialTheme.shapes.small)
+    ) {
+        lst.forEachIndexed { index, title ->
+            Tab(
+                selected = state - 1 == index,
+                onClick = {
+                    viewModel.currentPage = title
+                    viewModel.getCharacter()
+                },
+                text = { Text(
+                    text = title.toString(),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis) },
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    //.background(MaterialTheme.colorScheme.tertiary)
+            )
+        }
+    }
 }
 
 @Composable
@@ -105,20 +148,27 @@ fun CardScreen(
     characterList: List<ResultCharacter>,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(
-        modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(6.dp),
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(6.dp)
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(6.dp),
 
-        ) {
-        items(
-            items = characterList
-        ) {
-                character -> CharacterCard(
-            navigateToInformation = navigateToInformation,
-            character = character,
-            modifier = Modifier
-        )
+            ) {
+            items(
+                items = characterList
+            ) {
+                    character -> CharacterCard(
+                navigateToInformation = navigateToInformation,
+                character = character,
+                modifier = Modifier
+            )
+            }
         }
+
     }
 }
 
