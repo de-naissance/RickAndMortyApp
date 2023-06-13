@@ -16,6 +16,8 @@ import com.example.rickandmortyapp.ui.HomeViewModel
 import com.example.rickandmortyapp.ui.screens.informationScreen.InformationScreen
 import com.example.rickandmortyapp.ui.screens.informationScreen.InformationViewModel
 import com.example.rickandmortyapp.ui.screens.informationScreen.SelectedCharacter
+import com.example.rickandmortyapp.ui.screens.filterScreen.SearchDestination
+import com.example.rickandmortyapp.ui.screens.filterScreen.FilterScreen
 
 @Composable
 fun RickAndMortyNavHost(
@@ -35,6 +37,9 @@ fun RickAndMortyNavHost(
                 navigateToInformation = {
                     navController.navigate("${SelectedCharacter.route}/$it")
                 },
+                navigateToSearch = {
+                                   navController.navigate(SearchDestination.route)
+                },
                 selectLayout = homeViewModel::selectLayout,
                 layoutUiState = homeViewModel.layoutUiState.collectAsState().value
             )
@@ -51,6 +56,11 @@ fun RickAndMortyNavHost(
             InformationScreen(
                 navigationBack = { navController.navigateUp() },
                 //characterUiState = informationViewModel.characterUiState
+            )
+        }
+        composable(route = SearchDestination.route) {
+            FilterScreen(
+                navigationBack = { navController.navigateUp() }
             )
         }
     }

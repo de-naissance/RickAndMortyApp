@@ -60,6 +60,7 @@ object HomeDestination : NavigationDestination {
 fun HomeScreen(
     appUiState: AppUiState,
     navigateToInformation: (Int) -> Unit,
+    navigateToSearch: () -> Unit,
     selectLayout: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     layoutUiState: LayoutUiState
@@ -69,7 +70,8 @@ fun HomeScreen(
             HomeTopAppBar(
                 title = stringResource(HomeDestination.titleRes),
                 layoutUiState = layoutUiState,
-                selectLayout = selectLayout
+                selectLayout = selectLayout,
+                navigateToSearch = navigateToSearch
             )
         }
     ) { innerPadding ->

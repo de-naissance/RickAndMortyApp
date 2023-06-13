@@ -58,7 +58,8 @@ fun HomeTopAppBar(
     title: String,
     modifier: Modifier = Modifier,
     selectLayout: (Boolean) -> Unit,
-    layoutUiState: LayoutUiState
+    layoutUiState: LayoutUiState,
+    navigateToSearch: () -> Unit
 ) {
     val isLinearLayout = layoutUiState.isLinearLayout
 
@@ -71,6 +72,17 @@ fun HomeTopAppBar(
         ) },
         modifier = modifier,
         actions = {
+            IconButton(
+                onClick = {
+                    navigateToSearch()
+                }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.manage_search),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onBackground
+                )
+            }
             IconButton(
                 onClick = {
                     selectLayout(!isLinearLayout)
@@ -208,7 +220,7 @@ fun InformationScreenTopAppBar(
                     text = title,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Start
                 )
             },
             modifier = modifier,
