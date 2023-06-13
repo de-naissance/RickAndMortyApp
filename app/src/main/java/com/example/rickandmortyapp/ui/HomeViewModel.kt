@@ -1,14 +1,10 @@
 package com.example.rickandmortyapp.ui
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortyapp.R
@@ -91,7 +87,7 @@ class HomeViewModel(
 data class LayoutUiState(
     val isLinearLayout: Boolean = true,
     val toggleContentDescription: String =
-        if (isLinearLayout) "Пук" else "Хрюк",
+        if (isLinearLayout) "Linear Layout" else "Grid Layout",
     val toggleIcon: Int =
         if (isLinearLayout) R.drawable.toc else R.drawable.grid_view
 )

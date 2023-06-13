@@ -37,6 +37,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,6 +49,7 @@ import com.example.rickandmortyapp.network.Location
 import com.example.rickandmortyapp.network.Origin
 import com.example.rickandmortyapp.network.ResultCharacter
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
+import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
 import java.util.Locale
 
 object HomeDestination : NavigationDestination {
@@ -136,7 +138,6 @@ fun TabPage(
                     overflow = TextOverflow.Ellipsis) },
                 modifier = Modifier
                     .clip(MaterialTheme.shapes.medium)
-                    //.background(MaterialTheme.colorScheme.tertiary)
             )
         }
     }
@@ -221,7 +222,15 @@ fun GridCharacterCard(
             contentScale = ContentScale.Crop
         )
         Text(
-            text = character.name
+            text = character.name,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                ),
+            style = TextStyle(
+                color = MaterialTheme.colorScheme.surfaceVariant
+            )
         )
     }
 }
@@ -350,8 +359,35 @@ fun TestGridScreen() {
         navigateToInformation = { }
     )
 }
+@Preview()
+@Composable
+fun TestDarkGridScreen() {
+    val listCharacter = List(10
+    ) {
+        ResultCharacter(
+            id = 10,
+            name = "Toxic Rick",
+            status = "Dead",
+            species = "Humanoid",
+            type = "Rick's Toxic Side",
+            gender = "Male",
+            origin = Origin("Alien Spa", "https://rickandmortyapi.com/api/location/64"),
+            location = Location("Earth", "https://rickandmortyapi.com/api/location/20"),
+            image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg",
+            episode = listOf("https://rickandmortyapi.com/api/episode/27"),
+            url = "https://rickandmortyapi.com/api/character/361",
+            created = "2018-01-10T18:20:41.703Z"
+        )
+    }
+    RickAndMortyAppTheme(useDarkTheme = true) {
+        GridScreen(
+            characterList = listCharacter,
+            navigateToInformation = { }
+        )
+    }
+}
 
-@Preview
+/*@Preview
 @Composable
 fun TestCardScreen() {
     val listCharacter = List(10
@@ -375,4 +411,4 @@ fun TestCardScreen() {
         characterList = listCharacter,
         navigateToInformation = { }
     )
-}
+}*/
