@@ -1,14 +1,15 @@
 package com.example.rickandmortyapp.ui
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.data.AppRepository
+import com.example.rickandmortyapp.data.SearchFilter
 import com.example.rickandmortyapp.data.UserPreferencesRepository
 import com.example.rickandmortyapp.network.ResultCharacter
 import kotlinx.coroutines.flow.SharingStarted
@@ -45,8 +46,15 @@ class HomeViewModel(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = LayoutUiState()
         )
+    // Номер текущей страницы
     var currentPage by mutableIntStateOf (1)
+    // Количество страниц в запросе
     var maxPage by mutableIntStateOf (1)
+    // Данные фильтра поиска
+
+    private var _filterSearch = SearchFilter()
+    var filterSearch = mutableStateOf(_filterSearch)
+
     /*
      * [selectLayout] изменяет макет и значки соответствующим образом и
      * сохраните выбранное в хранилище данных через  [userPreferencesRepository]
@@ -67,7 +75,12 @@ class HomeViewModel(
             appUiState = AppUiState.Loading
             appUiState = try {
                 val characterRequest = appRepository.getCharacter(
-                    page = page
+                    page = page,
+                    name = _filterSearch.name,
+                    status = _filterSearch.status,
+                    species = _filterSearch.species,
+                    type = _filterSearch.type,
+                    gender = _filterSearch.gender
                 )
                 val characters = characterRequest.results
                 maxPage = characterRequest.info.pages
@@ -78,6 +91,13 @@ class HomeViewModel(
                 AppUiState.Error
             }
         }
+    }
+    fun filterChange(
+        searchFilter: SearchFilter
+    ) {
+        currentPage = 1
+        _filterSearch = searchFilter
+        getCharacter(currentPage)
     }
 }
 

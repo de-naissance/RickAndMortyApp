@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.rickandmortyapp.R
+import com.example.rickandmortyapp.ui.HomeViewModel
 import com.example.rickandmortyapp.ui.InformationScreenTopAppBar
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
 
@@ -40,8 +41,11 @@ object SearchDestination : NavigationDestination {
 
 @Composable
 fun FilterScreen(
-    navigationBack: () -> Unit
+    navigationBack: () -> Unit,
+    viewModel: HomeViewModel,
+    onSendButtonClicked: () -> Unit
 ) {
+    val searchUiState = viewModel.filterSearch.value
     Scaffold(
         topBar = {
             InformationScreenTopAppBar(
@@ -56,19 +60,27 @@ fun FilterScreen(
                 .fillMaxWidth()
                 .padding(innerPadding)
         ) {
-            FilterGivenName()
-            FilterGivenStatus()
-            FilterGivenSpecies()
-            FilterGivenType()
-            FilterGivenGender()
-            ResultButton()
+            FilterGivenName(searchUiState.name)
+            FilterGivenStatus(
+                searchUiState.status,
+                change = { searchUiState.status = it }
+            )
+            FilterGivenSpecies(searchUiState.species)
+            FilterGivenType(searchUiState.type)
+            FilterGivenGender(searchUiState.gender)
+            ResultButton(
+                searchFilter = {
+                    viewModel.filterChange(searchUiState)
+                    onSendButtonClicked()
+                }
+            )
         }
     }
 }
 
 @Composable
-fun FilterGivenName() {
-    var searchText by rememberSaveable { mutableStateOf("") }
+fun FilterGivenName(search: String) {
+    var searchText by rememberSaveable { mutableStateOf(search) }
 
     OutlinedTextField(
         value = searchText,
@@ -88,10 +100,12 @@ fun FilterGivenName() {
 
 @Composable
 fun FilterGivenStatus(
-
+    stat: String,
+    change: (String) -> Unit
 ) {
-    var state by remember { mutableIntStateOf(0) }
-    val status = listOf("Alive", "Dead", "Unknown")
+    val status = listOf("All", "Alive", "Dead", "Unknown")
+    val s = status.indexOfFirst { it.lowercase() == stat }
+    var state by remember { mutableIntStateOf(if (s == -1) 0 else s) }
 
     TabRow(
         selectedTabIndex = state,
@@ -102,7 +116,10 @@ fun FilterGivenStatus(
         status.forEachIndexed { index, status ->
             Tab(
                 selected = state == index,
-                onClick =  { state = index },
+                onClick =  {
+                    state = index
+                    change(if (status == "All") "" else status)
+                           },
                 text = {
                     Text(
                         text = status,
@@ -118,9 +135,9 @@ fun FilterGivenStatus(
 
 @Composable
 fun FilterGivenSpecies(
-
+    search: String
 ) {
-    var searchText by rememberSaveable { mutableStateOf("") }
+    var searchText by rememberSaveable { mutableStateOf(search) }
 
     OutlinedTextField(
         value = searchText,
@@ -139,9 +156,9 @@ fun FilterGivenSpecies(
 }
 @Composable
 fun FilterGivenType(
-
+    search: String
 ) {
-    var searchText by rememberSaveable { mutableStateOf("") }
+    var searchText by rememberSaveable { mutableStateOf(search) }
 
     OutlinedTextField(
         value = searchText,
@@ -161,10 +178,10 @@ fun FilterGivenType(
 
 @Composable
 fun FilterGivenGender(
-
+    gender: String
 ) {
     var state by remember { mutableIntStateOf(0) }
-    val status = listOf("female", "male", "genderless", "Unknown")
+    val status = listOf("All", "Female", "Male", "Genderless", "Unknown")
 
     ScrollableTabRow(
         selectedTabIndex = state,
@@ -207,7 +224,7 @@ fun CancelInput(
 
 @Composable
 fun ResultButton(
-    
+    searchFilter: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -217,7 +234,7 @@ fun ResultButton(
         horizontalArrangement = Arrangement.Center
     ) {
         Button(
-            onClick = { /*TODO*/ },
+            onClick = searchFilter,
             modifier = Modifier.padding(horizontal = 6.dp)
         ) {
             Text(text = "Search")

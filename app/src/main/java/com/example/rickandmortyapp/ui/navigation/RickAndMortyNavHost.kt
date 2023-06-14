@@ -59,8 +59,16 @@ fun RickAndMortyNavHost(
             )
         }
         composable(route = SearchDestination.route) {
+            val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
             FilterScreen(
-                navigationBack = { navController.navigateUp() }
+                navigationBack = { navController.navigateUp() },
+                viewModel = homeViewModel,
+                onSendButtonClicked = { navController.navigateUp()/*navController.popBackStack(
+                    route = HomeDestination.route,
+                    inclusive = false,
+                    saveState = true
+                )*/}
             )
         }
     }

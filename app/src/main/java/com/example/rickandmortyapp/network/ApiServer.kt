@@ -11,7 +11,12 @@ interface ApiServer {
 
     @GET("api/character")
     suspend fun getCharacter(
-        @Query("page") page: Int? = null
+        @Query("page") page: Int? = null,
+        @Query("name") name: String,
+        @Query("status") status: String,
+        @Query("species") species: String,
+        @Query("type") type: String,
+        @Query("gender") gender: String,
     ): CharacterRequest
 
     @GET("api/episode/{id}")
