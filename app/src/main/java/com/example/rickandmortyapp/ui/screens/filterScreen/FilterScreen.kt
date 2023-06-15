@@ -45,7 +45,7 @@ fun FilterScreen(
     viewModel: HomeViewModel,
     onSendButtonClicked: () -> Unit
 ) {
-    val searchUiState = viewModel.filterSearch.value
+    val searchUiState = viewModel.searchFilter
     Scaffold(
         topBar = {
             InformationScreenTopAppBar(
@@ -67,7 +67,10 @@ fun FilterScreen(
             )
             FilterGivenSpecies(searchUiState.species)
             FilterGivenType(searchUiState.type)
-            FilterGivenGender(searchUiState.gender)
+            FilterGivenGender(
+                searchUiState.gender,
+                gender = { searchUiState.gender = it }
+            )
             ResultButton(
                 searchFilter = {
                     viewModel.filterChange(searchUiState)
@@ -178,7 +181,8 @@ fun FilterGivenType(
 
 @Composable
 fun FilterGivenGender(
-    gender: String
+    genderStatus: String,
+    gender: (String) -> Unit
 ) {
     var state by remember { mutableIntStateOf(0) }
     val status = listOf("All", "Female", "Male", "Genderless", "Unknown")

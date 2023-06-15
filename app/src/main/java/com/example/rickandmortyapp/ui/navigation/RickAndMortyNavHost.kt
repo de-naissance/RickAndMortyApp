@@ -55,20 +55,17 @@ fun RickAndMortyNavHost(
             val informationViewModel: InformationViewModel = viewModel(factory = AppViewModelProvider.Factory)
             InformationScreen(
                 navigationBack = { navController.navigateUp() },
-                //characterUiState = informationViewModel.characterUiState
+
             )
         }
         composable(route = SearchDestination.route) {
             val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
-
             FilterScreen(
                 navigationBack = { navController.navigateUp() },
                 viewModel = homeViewModel,
-                onSendButtonClicked = { navController.navigateUp()/*navController.popBackStack(
-                    route = HomeDestination.route,
-                    inclusive = false,
-                    saveState = true
-                )*/}
+                onSendButtonClicked = {
+                    navController.navigate(HomeDestination.route)
+                }
             )
         }
     }

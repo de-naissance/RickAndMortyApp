@@ -52,8 +52,7 @@ class HomeViewModel(
     var maxPage by mutableIntStateOf (1)
     // Данные фильтра поиска
 
-    private var _filterSearch = SearchFilter()
-    var filterSearch = mutableStateOf(_filterSearch)
+    val searchFilter = _searchFilter
 
     /*
      * [selectLayout] изменяет макет и значки соответствующим образом и
@@ -76,12 +75,13 @@ class HomeViewModel(
             appUiState = try {
                 val characterRequest = appRepository.getCharacter(
                     page = page,
-                    name = _filterSearch.name,
-                    status = _filterSearch.status,
-                    species = _filterSearch.species,
-                    type = _filterSearch.type,
-                    gender = _filterSearch.gender
+                    name = searchFilter.name,
+                    status = searchFilter.status,
+                    species = searchFilter.species,
+                    type = searchFilter.type,
+                    gender = searchFilter.gender
                 )
+                Log.d("searchFilter", searchFilter.status)
                 val characters = characterRequest.results
                 maxPage = characterRequest.info.pages
                 AppUiState.Success(characters)
@@ -96,8 +96,12 @@ class HomeViewModel(
         searchFilter: SearchFilter
     ) {
         currentPage = 1
-        _filterSearch = searchFilter
+        _searchFilter = searchFilter
         getCharacter(currentPage)
+    }
+
+    companion object {
+        private var _searchFilter by mutableStateOf(SearchFilter())
     }
 }
 
