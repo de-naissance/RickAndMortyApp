@@ -38,7 +38,7 @@ fun RickAndMortyNavHost(
                     navController.navigate("${SelectedCharacter.route}/$it")
                 },
                 navigateToSearch = {
-                                   navController.navigate(SearchDestination.route)
+                    navController.navigate(SearchDestination.route)
                 },
                 selectLayout = homeViewModel::selectLayout,
                 layoutUiState = homeViewModel.layoutUiState.collectAsState().value
@@ -53,13 +53,15 @@ fun RickAndMortyNavHost(
             })
         ) {
             val informationViewModel: InformationViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
             InformationScreen(
                 navigationBack = { navController.navigateUp() },
 
-            )
+                )
         }
         composable(route = SearchDestination.route) {
             val homeViewModel: HomeViewModel = viewModel(factory = AppViewModelProvider.Factory)
+
             FilterScreen(
                 navigationBack = { navController.navigateUp() },
                 viewModel = homeViewModel,

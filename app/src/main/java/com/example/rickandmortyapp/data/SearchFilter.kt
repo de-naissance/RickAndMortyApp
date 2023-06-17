@@ -1,9 +1,9 @@
 package com.example.rickandmortyapp.data
 
 data class SearchFilter(
-    var name: String = "",
-    var status: String = "",
-    var species: String = "",
-    var type: String = "",
-    var gender: String = "",
+    val name: String = "",
+    val status: String = "",
+    val species: String = "",
+    val type: String = "",
+    val gender: String = "",
 )

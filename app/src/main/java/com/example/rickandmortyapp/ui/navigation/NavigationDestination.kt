@@ -1,16 +1,16 @@
 package com.example.rickandmortyapp.ui.navigation
 
 /**
- * Интерфейс для описания пунктов назначения навигации для приложения
+ * Interface for describing navigation destinations for the app
  */
 interface NavigationDestination {
     /**
-     * Уникальное имя для определения пути к составному элементу
+     * A unique name for defining the path to a composite element
      */
     val route: String
 
     /**
-     * Строковый идентификатор ресурса, содержащий заголовок, который будет отображаться на экране.
+     * The string identifier of the resource containing the title that will be displayed on the screen.
      */
     val titleRes: Int
 }

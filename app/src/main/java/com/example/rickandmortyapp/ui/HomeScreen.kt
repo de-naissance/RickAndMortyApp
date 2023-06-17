@@ -1,6 +1,5 @@
 package com.example.rickandmortyapp.ui
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,11 +26,9 @@ import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -48,9 +44,9 @@ import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.network.Location
 import com.example.rickandmortyapp.network.Origin
 import com.example.rickandmortyapp.network.ResultCharacter
+import com.example.rickandmortyapp.ui.components.StatusIcon
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
 import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
-import java.util.Locale
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -124,6 +120,7 @@ fun TabPage(
     ScrollableTabRow(
         selectedTabIndex = state - 1,
         modifier = Modifier
+            .fillMaxWidth()
             .padding(horizontal = 10.dp)
             .clip(MaterialTheme.shapes.small)
     ) {
@@ -309,33 +306,6 @@ fun StatusInformation(
     }
 }
 
-@Composable
-fun StatusIcon(
-    status: String
-) {
-    /** Выбора цвета от статуса персонажа */
-    val tint by animateColorAsState(
-        when(status) {
-            "Alive" -> Color(0xFF00BC00)
-            "Dead" -> Color(0xFFFF0000)
-            else -> Color(0xFFBCBCBC)
-        }
-    )
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(5.dp))
-            .background(tint),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = status
-                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
-            color = Color.White,
-            modifier = Modifier.padding(3.dp)
-        )
-    }
-}
-
 @Preview
 @Composable
 fun TestGridScreen() {
@@ -361,7 +331,7 @@ fun TestGridScreen() {
         navigateToInformation = { }
     )
 }
-@Preview()
+@Preview
 @Composable
 fun TestDarkGridScreen() {
     val listCharacter = List(10
@@ -388,29 +358,3 @@ fun TestDarkGridScreen() {
         )
     }
 }
-
-/*@Preview
-@Composable
-fun TestCardScreen() {
-    val listCharacter = List(10
-    ) {
-        ResultCharacter(
-            id = 10,
-            name = "Toxic Rick",
-            status = "Dead",
-            species = "Humanoid",
-            type = "Rick's Toxic Side",
-            gender = "Male",
-            origin = Origin("Alien Spa", "https://rickandmortyapi.com/api/location/64"),
-            location = Location("Earth", "https://rickandmortyapi.com/api/location/20"),
-            image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg",
-            episode = listOf("https://rickandmortyapi.com/api/episode/27"),
-            url = "https://rickandmortyapi.com/api/character/361",
-            created = "2018-01-10T18:20:41.703Z"
-        )
-    }
-    CardScreen(
-        characterList = listCharacter,
-        navigateToInformation = { }
-    )
-}*/

@@ -30,13 +30,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.rickandmortyapp.R
+import com.example.rickandmortyapp.data.SearchFilter
 import com.example.rickandmortyapp.ui.HomeViewModel
 import com.example.rickandmortyapp.ui.InformationScreenTopAppBar
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
 
 object SearchDestination : NavigationDestination {
-    override val route = "search"
-    override val titleRes = R.string.app_name
+    override val route = "filterCharacters"
+    override val titleRes = R.string.filterCharacters
 }
 
 @Composable
@@ -45,7 +46,8 @@ fun FilterScreen(
     viewModel: HomeViewModel,
     onSendButtonClicked: () -> Unit
 ) {
-    val searchUiState = viewModel.searchFilter
+    var searchUiState = viewModel.searchFilter
+
     Scaffold(
         topBar = {
             InformationScreenTopAppBar(
@@ -60,35 +62,58 @@ fun FilterScreen(
                 .fillMaxWidth()
                 .padding(innerPadding)
         ) {
-            FilterGivenName(searchUiState.name)
-            FilterGivenStatus(
-                searchUiState.status,
-                change = { searchUiState.status = it }
+            FilterTextField(
+                search = searchUiState.name,
+                changeSearch = { searchUiState = searchUiState.copy(name = it) },
+                label = "Character"
             )
-            FilterGivenSpecies(searchUiState.species)
-            FilterGivenType(searchUiState.type)
+            FilterGivenStatus(
+                _selected = searchUiState.status,
+                changeSelection = { searchUiState = searchUiState.copy(status = it) }
+            )
+            FilterTextField(
+                search = searchUiState.species,
+                changeSearch = { searchUiState = searchUiState.copy(species = it) },
+                label = "Species"
+            )
+            FilterTextField(
+                search = searchUiState.type,
+                changeSearch = { searchUiState = searchUiState.copy(type = it) },
+                label = "Type"
+            )
             FilterGivenGender(
-                searchUiState.gender,
-                gender = { searchUiState.gender = it }
+                _selected = searchUiState.gender,
+                changeSelection = { searchUiState = searchUiState.copy(gender = it) }
             )
             ResultButton(
                 searchFilter = {
                     viewModel.filterChange(searchUiState)
                     onSendButtonClicked()
-                }
+                },
+                reset = { searchUiState = SearchFilter() }
             )
         }
     }
 }
 
+/**
+ * Field for entering and changing filter parameters in text format
+ */
 @Composable
-fun FilterGivenName(search: String) {
+fun FilterTextField(
+    search: String,
+    changeSearch: (String) -> Unit,
+    label: String
+) {
     var searchText by rememberSaveable { mutableStateOf(search) }
 
     OutlinedTextField(
         value = searchText,
-        onValueChange = { searchText = it },
-        label = { Text("Character") },
+        onValueChange = {
+            searchText = it
+            changeSearch(searchText)
+        },
+        label = { Text(label) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
@@ -97,18 +122,26 @@ fun FilterGivenName(search: String) {
             keyboardType = KeyboardType.Text
         ),
         shape = MaterialTheme.shapes.small,
-        trailingIcon = { CancelInput(searchText = { searchText = "" }) }
+        trailingIcon = {
+            CancelInput(
+                searchText = {
+                    searchText = ""
+                    changeSearch(searchText)
+                }
+            )
+        }
     )
 }
 
+// Selecting a status parameter
 @Composable
 fun FilterGivenStatus(
-    stat: String,
-    change: (String) -> Unit
+    _selected: String,
+    changeSelection: (String) -> Unit
 ) {
-    val status = listOf("All", "Alive", "Dead", "Unknown")
-    val s = status.indexOfFirst { it.lowercase() == stat }
-    var state by remember { mutableIntStateOf(if (s == -1) 0 else s) }
+    val option = listOf("All", "Alive", "Dead", "Unknown")
+    val selected by remember { mutableStateOf(if (_selected == "") "All" else _selected) }
+    var state by remember { mutableIntStateOf(option.indexOfFirst { it == selected }) }
 
     TabRow(
         selectedTabIndex = state,
@@ -116,13 +149,13 @@ fun FilterGivenStatus(
             .padding(horizontal = 10.dp)
             .clip(MaterialTheme.shapes.small)
     ) {
-        status.forEachIndexed { index, status ->
+        option.forEachIndexed { index, status ->
             Tab(
                 selected = state == index,
                 onClick =  {
                     state = index
-                    change(if (status == "All") "" else status)
-                           },
+                    changeSelection(if (status == "All") "" else status)
+                },
                 text = {
                     Text(
                         text = status,
@@ -136,56 +169,15 @@ fun FilterGivenStatus(
     }
 }
 
-@Composable
-fun FilterGivenSpecies(
-    search: String
-) {
-    var searchText by rememberSaveable { mutableStateOf(search) }
-
-    OutlinedTextField(
-        value = searchText,
-        onValueChange = { searchText = it },
-        label = { Text("Species") },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text
-        ),
-        shape = MaterialTheme.shapes.small,
-        trailingIcon = { CancelInput(searchText = { searchText = "" }) }
-    )
-}
-@Composable
-fun FilterGivenType(
-    search: String
-) {
-    var searchText by rememberSaveable { mutableStateOf(search) }
-
-    OutlinedTextField(
-        value = searchText,
-        onValueChange = { searchText = it },
-        label = { Text("Type") },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Text
-        ),
-        shape = MaterialTheme.shapes.small,
-        trailingIcon = { CancelInput(searchText = { searchText = "" }) }
-    )
-}
-
+// Selecting the gender parameter
 @Composable
 fun FilterGivenGender(
-    genderStatus: String,
-    gender: (String) -> Unit
+    _selected: String,
+    changeSelection: (String) -> Unit
 ) {
-    var state by remember { mutableIntStateOf(0) }
-    val status = listOf("All", "Female", "Male", "Genderless", "Unknown")
+    val option = listOf("All", "Female", "Male", "Genderless", "Unknown")
+    val selected by remember { mutableStateOf(if (_selected == "") "All" else _selected) }
+    var state by remember { mutableIntStateOf(option.indexOfFirst { it == selected }) }
 
     ScrollableTabRow(
         selectedTabIndex = state,
@@ -193,10 +185,13 @@ fun FilterGivenGender(
             .padding(horizontal = 10.dp)
             .clip(MaterialTheme.shapes.small)
     ) {
-        status.forEachIndexed { index, status ->
+        option.forEachIndexed { index, status ->
             Tab(
                 selected = state == index,
-                onClick =  { state = index },
+                onClick =  {
+                    state = index
+                    changeSelection(if (status == "All") "" else status)
+                },
                 text = {
                     Text(
                         text = status,
@@ -226,15 +221,17 @@ fun CancelInput(
     }
 }
 
+
+// Return to HomeScreen with set or reset parameters
 @Composable
 fun ResultButton(
-    searchFilter: () -> Unit
+    searchFilter: () -> Unit,
+    reset: () -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp)
-        ,
+            .padding(10.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         Button(
@@ -244,7 +241,10 @@ fun ResultButton(
             Text(text = "Search")
         }
         Button(
-            onClick = { /*TODO*/ },
+            onClick = {
+                reset()
+                searchFilter()
+            } ,
             modifier = Modifier.padding(horizontal = 6.dp)
         ) {
             Text(text = "Reset")

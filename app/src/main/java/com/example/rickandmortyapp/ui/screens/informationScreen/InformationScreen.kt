@@ -1,11 +1,8 @@
 package com.example.rickandmortyapp.ui.screens.informationScreen
 
-
-import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -13,7 +10,6 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -36,16 +32,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -61,12 +58,12 @@ import com.example.rickandmortyapp.ui.ErrorScreen
 import com.example.rickandmortyapp.ui.InformationScreenTopAppBar
 import com.example.rickandmortyapp.ui.LoadingScreen
 import com.example.rickandmortyapp.ui.components.LoadingEpisodeCard
+import com.example.rickandmortyapp.ui.components.StatusIcon
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
 import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
-import java.util.Locale
 
 object SelectedCharacter : NavigationDestination {
-    override val route = "information"
+    override val route = "CharacterInformation"
     override val titleRes =  R.string.characterInformation
     const val itemIdArg = "itemId"
     val routeWithArgs = "$route/{$itemIdArg}"
@@ -87,8 +84,7 @@ fun InformationScreen(
                 navigateUp = navigationBack
             )
         }
-    ) {
-            innerPadding ->
+    ) { innerPadding ->
         when (characterUiState) {
             is CharacterUiState.Loading -> LoadingScreen(modifier.padding(innerPadding))
             is CharacterUiState.Success -> Information(
@@ -122,21 +118,23 @@ fun Information(
                 .fillMaxHeight(0.3f),
             alignment = Alignment.Center
         )
-
         CardInformation(
             character = character
         )
-
     }
 }
 
+/**
+ * Displaying information about the character using TabRow
+ * and smooth animation of the transition between tabs
+ */
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun CardInformation(
     character: ResultCharacter,
     modifier: Modifier = Modifier
 ) {
-    var state by remember { mutableStateOf(0) }
+    var state by remember { mutableIntStateOf(0) }
     val titles = listOf("About", "Episodes")
 
     Card(
@@ -159,7 +157,6 @@ fun CardInformation(
                     modifier = Modifier,
                 )
             }
-
             TabRow(
                 selectedTabIndex = state,
                 modifier = modifier
@@ -178,10 +175,10 @@ fun CardInformation(
                 targetState = state,
                 transitionSpec = {
                     if (targetState == 0) {
-                        slideInHorizontally() { width -> -width } + fadeIn() with
-                                slideOutHorizontally() { width -> width } + fadeOut()
+                        slideInHorizontally { width -> -width } + fadeIn() with
+                                slideOutHorizontally { width -> width } + fadeOut()
                     } else {
-                        slideInHorizontally() { width -> width } + fadeIn() with
+                        slideInHorizontally { width -> width } + fadeIn() with
                                 slideOutHorizontally { width -> -width } + fadeOut()
                     }.using(SizeTransform(clip = false))
                 },
@@ -203,6 +200,9 @@ fun CardInformation(
     }
 }
 
+/**
+ * Character Tabular information
+ */
 @Composable
 fun AboutTab(
     status: String,
@@ -210,8 +210,7 @@ fun AboutTab(
     species: String,
     type: String,
     origin: Origin,
-    location: Location,
-    modifier: Modifier = Modifier
+    location: Location
 ) {
     Column(
         modifier = Modifier
@@ -222,7 +221,7 @@ fun AboutTab(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Status"
+                text = stringResource(id = R.string.status)
             )
             StatusIcon(status = status)
         }
@@ -231,7 +230,7 @@ fun AboutTab(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Gender")
+            Text(text = stringResource(id = R.string.gender))
             Text(text = gender)
         }
         Divider(modifier = Modifier.padding(vertical = 6.dp))
@@ -239,7 +238,7 @@ fun AboutTab(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Species")
+            Text(text = stringResource(id = R.string.species))
             Text(text = species)
         }
         if (type.isNotEmpty()) {
@@ -248,7 +247,7 @@ fun AboutTab(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Type")
+                Text(text = stringResource(id = R.string.type))
                 Text(text = type)
             }
         }
@@ -257,32 +256,36 @@ fun AboutTab(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = "Origin")
+            Text(text = stringResource(id = R.string.origin))
             Text(text = origin.name)
         }
         Divider(modifier = Modifier.padding(vertical = 6.dp))
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "Last known location:")
+            Text(text = stringResource(id = R.string.lastLocation))
             Text(text = location.name)
         }
         Divider(modifier = Modifier.padding(vertical = 6.dp))
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = "First seen in:")
+            Text(text = stringResource(id = R.string.firstSeenIn))
             Text(text = location.name)
         }
     }
 }
 
+/**
+ * The output of the episodes in which the character played.
+ * If the episode is loaded, the [LoadingEpisodeCard] stub is displayed
+ */
 @Composable
 fun EpisodeInformation(
     episodes: List<String>,
     viewModel: InformationViewModel = viewModel()
 ) {
-    LazyColumn() {
+    LazyColumn {
         items(episodes) {url ->
             val episodeState = viewModel.getEpisode(url).observeAsState()
             var episode by remember { mutableStateOf<Episode?>(null) }
@@ -300,6 +303,9 @@ fun EpisodeInformation(
     }
 }
 
+/**
+ * Episode Information
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EpisodeCard(
@@ -315,35 +321,6 @@ fun EpisodeCard(
             Text(text = episode.episode)
             Text(text = episode.name)
         }
-    }
-}
-
-
-
-@Composable
-fun StatusIcon(
-    status: String
-) {
-    /** Выбора цвета от статуса персонажа */
-    val tint by animateColorAsState(
-        when(status) {
-            "Alive" -> Color(0xFF00BC00)
-            "Dead" -> Color(0xFFFF0000)
-            else -> Color(0xFFBCBCBC)
-        }
-    )
-    Box(
-        modifier = Modifier
-            .clip(RoundedCornerShape(5.dp))
-            .background(tint),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = status
-                .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
-            color = Color.White,
-            modifier = Modifier.padding(3.dp)
-        )
     }
 }
 

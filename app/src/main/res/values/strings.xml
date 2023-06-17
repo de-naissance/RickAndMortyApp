@@ -4,4 +4,12 @@
     <string name="retry">Retry</string>
     <string name="loading">Loading</string>
     <string name="characterInformation">Character information</string>
+    <string name="filterCharacters">Filter characters</string>
+    <string name="status">Status</string>
+    <string name="gender">Gender</string>
+    <string name="species">Species</string>
+    <string name="type">Type</string>
+    <string name="origin">Origin</string>
+    <string name="lastLocation">Last known location:</string>
+    <string name="firstSeenIn">First seen in:</string>
 </resources>

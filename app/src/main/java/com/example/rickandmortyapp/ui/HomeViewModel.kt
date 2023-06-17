@@ -1,6 +1,5 @@
 package com.example.rickandmortyapp.ui
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +30,7 @@ class HomeViewModel(
 ): ViewModel() {
 
     /**
-     * Изменяемое состояние, в котором хранится статус самого последнего запроса
+     * The changeable state in which the status of the most recent request is stored
      */
     var appUiState: AppUiState by mutableStateOf(AppUiState.Loading)
         private set
@@ -46,17 +45,19 @@ class HomeViewModel(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = LayoutUiState()
         )
-    // Номер текущей страницы
+    // Current page number
     var currentPage by mutableIntStateOf (1)
-    // Количество страниц в запросе
+    // Number of pages in the request
     var maxPage by mutableIntStateOf (1)
-    // Данные фильтра поиска
-
+    companion object {
+        // Search Filter Data
+        private var _searchFilter by mutableStateOf(SearchFilter())
+    }
     val searchFilter = _searchFilter
 
-    /*
-     * [selectLayout] изменяет макет и значки соответствующим образом и
-     * сохраните выбранное в хранилище данных через  [userPreferencesRepository]
+    /**
+     * [selectLayout] changes the layout and icons accordingly and
+     * save the selected to the data warehouse via [userPreferencesRepository]
      */
     fun selectLayout(isLinearLayout: Boolean) {
         viewModelScope.launch {
@@ -67,6 +68,11 @@ class HomeViewModel(
     init {
         getCharacter()
     }
+
+    /**
+     * A function that sends a request to display a list of characters, indicating the page.
+     * The search parameters are taken from the [SearchFilter] variable
+     */
     fun getCharacter(
         page: Int? = currentPage
     ) {
@@ -81,7 +87,6 @@ class HomeViewModel(
                     type = searchFilter.type,
                     gender = searchFilter.gender
                 )
-                Log.d("searchFilter", searchFilter.status)
                 val characters = characterRequest.results
                 maxPage = characterRequest.info.pages
                 AppUiState.Success(characters)
@@ -92,16 +97,15 @@ class HomeViewModel(
             }
         }
     }
+
+    /**
+     * Changing the search parameters and setting the current page to 1
+     */
     fun filterChange(
         searchFilter: SearchFilter
     ) {
         currentPage = 1
         _searchFilter = searchFilter
-        getCharacter(currentPage)
-    }
-
-    companion object {
-        private var _searchFilter by mutableStateOf(SearchFilter())
     }
 }
 
