@@ -68,7 +68,8 @@ fun HomeTopAppBar(
             text = title,
             modifier = Modifier
                 .fillMaxWidth(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleLarge
         ) },
         modifier = modifier,
         actions = {
@@ -220,7 +221,8 @@ fun InformationScreenTopAppBar(
                     text = title,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Start,
+                    style = MaterialTheme.typography.titleLarge
                 )
             },
             modifier = modifier,

@@ -79,7 +79,7 @@ fun InformationScreen(
     Scaffold(
         topBar = {
             InformationScreenTopAppBar(
-                title = SelectedCharacter.route,
+                title = stringResource(SelectedCharacter.titleRes),
                 canNavigateBack = true,
                 navigateUp = navigationBack
             )
@@ -153,8 +153,9 @@ fun CardInformation(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Available character information",
+                    text = stringResource(id = R.string.availableInformation),
                     modifier = Modifier,
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
             TabRow(
@@ -167,7 +168,13 @@ fun CardInformation(
                     Tab(
                         selected = state == index,
                         onClick = { state = index },
-                        text = { Text(text = title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                        text = {
+                            Text(
+                                text = title,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.headlineSmall
+                            ) },
                     )
                 }
             }
@@ -221,7 +228,8 @@ fun AboutTab(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = stringResource(id = R.string.status)
+                text = stringResource(id = R.string.status),
+                style = MaterialTheme.typography.headlineSmall
             )
             StatusIcon(status = status)
         }
@@ -230,7 +238,10 @@ fun AboutTab(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = stringResource(id = R.string.gender))
+            Text(
+                text = stringResource(id = R.string.gender),
+                style = MaterialTheme.typography.headlineSmall
+            )
             Text(text = gender)
         }
         Divider(modifier = Modifier.padding(vertical = 6.dp))
@@ -238,7 +249,10 @@ fun AboutTab(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = stringResource(id = R.string.species))
+            Text(
+                text = stringResource(id = R.string.species),
+                style = MaterialTheme.typography.headlineSmall
+            )
             Text(text = species)
         }
         if (type.isNotEmpty()) {
@@ -247,7 +261,10 @@ fun AboutTab(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = stringResource(id = R.string.type))
+                Text(
+                    text = stringResource(id = R.string.type),
+                    style = MaterialTheme.typography.headlineSmall
+                )
                 Text(text = type)
             }
         }
@@ -256,22 +273,37 @@ fun AboutTab(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(text = stringResource(id = R.string.origin))
+            Text(
+                text = stringResource(id = R.string.origin),
+                style = MaterialTheme.typography.headlineSmall
+            )
             Text(text = origin.name)
         }
         Divider(modifier = Modifier.padding(vertical = 6.dp))
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(id = R.string.lastLocation))
-            Text(text = location.name)
+            Text(
+                text = stringResource(id = R.string.lastLocation),
+                style = MaterialTheme.typography.headlineSmall
+            )
+            Text(
+                text = location.name,
+                modifier = Modifier.padding(start = 12.dp)
+            )
         }
         Divider(modifier = Modifier.padding(vertical = 6.dp))
         Column(
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(id = R.string.firstSeenIn))
-            Text(text = location.name)
+            Text(
+                text = stringResource(id = R.string.firstSeenIn),
+                style = MaterialTheme.typography.headlineSmall
+            )
+            Text(
+                text = location.name,
+                modifier = Modifier.padding(start = 12.dp)
+            )
         }
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,7 +41,8 @@ fun StatusIcon(
             text = status
                 .replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
             color = Color.White,
-            modifier = Modifier.padding(3.dp)
+            modifier = Modifier.padding(3.dp),
+            style = MaterialTheme.typography.headlineSmall
         )
     }
 }

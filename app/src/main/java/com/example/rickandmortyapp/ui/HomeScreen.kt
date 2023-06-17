@@ -134,9 +134,11 @@ fun TabPage(
                 text = { Text(
                     text = title.toString(),
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis) },
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.headlineMedium
+                ) },
                 modifier = Modifier
-                    .clip(MaterialTheme.shapes.medium)
+                    .clip(MaterialTheme.shapes.medium),
             )
         }
     }
@@ -225,11 +227,13 @@ fun GridCharacterCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                ),
-            style = TextStyle(
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
+                .padding(horizontal = 4.dp),
+            style = MaterialTheme.typography.bodyLarge.copy(
                 color = MaterialTheme.colorScheme.surfaceVariant
-            )
+            ),
+            minLines = 2
         )
     }
 }
@@ -257,8 +261,7 @@ fun CharacterCard(
                 id = character.id,
                 name = character.name,
                 status = character.status,
-                gender = character.gender,
-                modifier = modifier.fillMaxWidth(0.70f)
+                gender = character.gender
             )
 
             AsyncImage(
@@ -281,8 +284,7 @@ fun StatusInformation(
     id: Int,
     name: String,
     status: String,
-    gender: String,
-    modifier: Modifier = Modifier
+    gender: String
 ) {
     Column(
         modifier = Modifier
@@ -290,11 +292,13 @@ fun StatusInformation(
     ) {
         Text(
             text = String.format("#%03d", id),
-            modifier = Modifier.padding(top = 4.dp)
+            modifier = Modifier.padding(top = 4.dp),
+            style = MaterialTheme.typography.headlineSmall
         )
         Spacer(modifier = Modifier.height(3.dp))
         Text(
-            text = name
+            text = name,
+            style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(6.dp))
         Row(
