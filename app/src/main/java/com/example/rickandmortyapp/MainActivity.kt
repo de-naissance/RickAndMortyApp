@@ -1,5 +1,6 @@
 package com.example.rickandmortyapp
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +12,7 @@ import com.example.rickandmortyapp.ui.RickAndMortyApp
 import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("StateFlowValueCalledInComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

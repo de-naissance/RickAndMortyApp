@@ -54,10 +54,10 @@ import com.example.rickandmortyapp.network.Episode
 import com.example.rickandmortyapp.network.Location
 import com.example.rickandmortyapp.network.Origin
 import com.example.rickandmortyapp.network.ResultCharacter
-import com.example.rickandmortyapp.ui.ErrorScreen
 import com.example.rickandmortyapp.ui.InformationScreenTopAppBar
-import com.example.rickandmortyapp.ui.LoadingScreen
+import com.example.rickandmortyapp.ui.components.ErrorScreen
 import com.example.rickandmortyapp.ui.components.LoadingEpisodeCard
+import com.example.rickandmortyapp.ui.components.LoadingScreen
 import com.example.rickandmortyapp.ui.components.StatusIcon
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
 import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
@@ -80,7 +80,6 @@ fun InformationScreen(
         topBar = {
             InformationScreenTopAppBar(
                 title = stringResource(SelectedCharacter.titleRes),
-                canNavigateBack = true,
                 navigateUp = navigationBack
             )
         }
@@ -379,7 +378,7 @@ fun TestHomeDark() {
             created = "2018-01-10T18:20:41.703Z"
         )
     }
-    RickAndMortyAppTheme(useDarkTheme = true) {
+    RickAndMortyAppTheme() {
         Information(
             character = listCharacter[0]
         )
@@ -408,7 +407,7 @@ fun TestHome() {
             created = "2018-01-10T18:20:41.703Z"
         )
     }
-    RickAndMortyAppTheme(useDarkTheme = false) {
+    RickAndMortyAppTheme() {
         Information(
             character = listCharacter[0]
         )

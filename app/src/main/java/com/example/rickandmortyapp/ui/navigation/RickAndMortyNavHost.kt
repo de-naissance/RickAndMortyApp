@@ -41,7 +41,9 @@ fun RickAndMortyNavHost(
                     navController.navigate(SearchDestination.route)
                 },
                 selectLayout = homeViewModel::selectLayout,
-                layoutUiState = homeViewModel.layoutUiState.collectAsState().value
+                layoutUiState = homeViewModel.layoutUiState.collectAsState().value,
+                selectDarkMode = homeViewModel::selectDarkMode,
+                darkMode = homeViewModel.darkModeState.collectAsState().value
             )
         }
 

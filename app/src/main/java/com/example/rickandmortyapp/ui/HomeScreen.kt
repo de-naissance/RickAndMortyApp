@@ -33,7 +33,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,9 +43,11 @@ import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.network.Location
 import com.example.rickandmortyapp.network.Origin
 import com.example.rickandmortyapp.network.ResultCharacter
+import com.example.rickandmortyapp.ui.components.ErrorScreen
+import com.example.rickandmortyapp.ui.components.LoadingScreen
 import com.example.rickandmortyapp.ui.components.StatusIcon
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
-import com.example.rickandmortyapp.ui.theme.RickAndMortyAppTheme
+import com.example.rickandmortyapp.ui.screens.homeScreen.HomeTopAppBar
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
@@ -58,8 +59,10 @@ fun HomeScreen(
     navigateToInformation: (Int) -> Unit,
     navigateToSearch: () -> Unit,
     selectLayout: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-    layoutUiState: LayoutUiState
+    layoutUiState: LayoutUiState,
+    selectDarkMode: (Boolean) -> Unit,
+    darkMode: LayoutUiState,
+    modifier: Modifier = Modifier
 ) {
     Scaffold(
         topBar = {
@@ -67,7 +70,9 @@ fun HomeScreen(
                 title = stringResource(HomeDestination.titleRes),
                 layoutUiState = layoutUiState,
                 selectLayout = selectLayout,
-                navigateToSearch = navigateToSearch
+                navigateToSearch = navigateToSearch,
+                darkMode = darkMode.darkMode,
+                selectMode = selectDarkMode
             )
         }
     ) { innerPadding ->
@@ -334,31 +339,4 @@ fun TestGridScreen() {
         characterList = listCharacter,
         navigateToInformation = { }
     )
-}
-@Preview
-@Composable
-fun TestDarkGridScreen() {
-    val listCharacter = List(10
-    ) {
-        ResultCharacter(
-            id = 10,
-            name = "Toxic Rick",
-            status = "Dead",
-            species = "Humanoid",
-            type = "Rick's Toxic Side",
-            gender = "Male",
-            origin = Origin("Alien Spa", "https://rickandmortyapi.com/api/location/64"),
-            location = Location("Earth", "https://rickandmortyapi.com/api/location/20"),
-            image = "https://rickandmortyapi.com/api/character/avatar/361.jpeg",
-            episode = listOf("https://rickandmortyapi.com/api/episode/27"),
-            url = "https://rickandmortyapi.com/api/character/361",
-            created = "2018-01-10T18:20:41.703Z"
-        )
-    }
-    RickAndMortyAppTheme(useDarkTheme = true) {
-        GridScreen(
-            characterList = listCharacter,
-            navigateToInformation = { }
-        )
-    }
 }

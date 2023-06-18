@@ -52,7 +52,6 @@ fun FilterScreen(
         topBar = {
             InformationScreenTopAppBar(
                 title = SearchDestination.route,
-                canNavigateBack = true,
                 navigateUp = navigationBack
             )
         }

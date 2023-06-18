@@ -36,12 +36,20 @@ class HomeViewModel(
         private set
     val layoutUiState: StateFlow<LayoutUiState> =
         userPreferencesRepository.isLinearLayout.map { isLinearLayout ->
-            LayoutUiState(isLinearLayout)
+            LayoutUiState(isLinearLayout = isLinearLayout)
         }.stateIn(
             scope = viewModelScope,
             // Flow is set to emits value for when app is on the foreground
             // 5 seconds stop delay is added to ensure it flows continuously
             // for cases such as configuration change
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = LayoutUiState()
+        )
+    val darkModeState: StateFlow<LayoutUiState> =
+        userPreferencesRepository.stateDarkMode.map { isDarkMode ->
+            LayoutUiState(darkMode = isDarkMode)
+        }.stateIn(
+            scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = LayoutUiState()
         )
@@ -62,6 +70,11 @@ class HomeViewModel(
     fun selectLayout(isLinearLayout: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.saveLayoutPreference(isLinearLayout)
+        }
+    }
+    fun selectDarkMode(isDarkMode: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveStateDarkMode(isDarkMode)
         }
     }
 
@@ -117,5 +130,6 @@ data class LayoutUiState(
     val toggleContentDescription: String =
         if (isLinearLayout) "Linear Layout" else "Grid Layout",
     val toggleIcon: Int =
-        if (isLinearLayout) R.drawable.toc else R.drawable.grid_view
+        if (isLinearLayout) R.drawable.toc else R.drawable.grid_view,
+    val darkMode: Boolean = false
 )
