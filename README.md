@@ -23,9 +23,16 @@ RickAndMortyApp - это приложение позволяет узнать и
 Также на главном экране имеет возможность в поле TopBar выбирать вид карточек персонажей в виде Grid/Layout и выбор тёмной темы через DropMenu.
 
 # Скриншоты
-
+Светлая тема:
 <p align="middle">
   <img src="./screenshots/Screenshot_1.png" width="270">
   <img src="./screenshots/Screenshot_2.png" width="270">
   <img src="./screenshots/Screenshot_3.png" width="270">
+</p>
+
+Тёмная тема:
+<p align="middle">
+  <img src="./screenshots/Screenshot_4.png" width="270">
+  <img src="./screenshots/Screenshot_5.png" width="270">
+  <img src="./screenshots/Screenshot_6.png" width="270">
 </p>
