@@ -116,7 +116,7 @@ fun TestLoadingEpisode() {
             }
         }
 
-        RickAndMortyAppTheme(useDarkTheme = true) {
+        RickAndMortyAppTheme() {
             Card(
                 modifier = Modifier
                     .padding(6.dp)
