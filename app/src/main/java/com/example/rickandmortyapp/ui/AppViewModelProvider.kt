@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.rickandmortyapp.AppApplication
+import com.example.rickandmortyapp.ui.screens.homeScreen.HomeViewModel
 import com.example.rickandmortyapp.ui.screens.informationScreen.InformationViewModel
 
 object AppViewModelProvider {

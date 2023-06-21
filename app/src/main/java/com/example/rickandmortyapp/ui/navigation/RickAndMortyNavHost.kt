@@ -10,9 +10,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.rickandmortyapp.ui.AppViewModelProvider
-import com.example.rickandmortyapp.ui.HomeDestination
-import com.example.rickandmortyapp.ui.HomeScreen
-import com.example.rickandmortyapp.ui.HomeViewModel
+import com.example.rickandmortyapp.ui.screens.homeScreen.HomeDestination
+import com.example.rickandmortyapp.ui.screens.homeScreen.HomeScreen
+import com.example.rickandmortyapp.ui.screens.homeScreen.HomeViewModel
 import com.example.rickandmortyapp.ui.screens.informationScreen.InformationScreen
 import com.example.rickandmortyapp.ui.screens.informationScreen.InformationViewModel
 import com.example.rickandmortyapp.ui.screens.informationScreen.SelectedCharacter

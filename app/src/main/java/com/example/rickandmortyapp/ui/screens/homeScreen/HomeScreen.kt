@@ -1,4 +1,4 @@
-package com.example.rickandmortyapp.ui
+package com.example.rickandmortyapp.ui.screens.homeScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -47,7 +47,6 @@ import com.example.rickandmortyapp.ui.components.ErrorScreen
 import com.example.rickandmortyapp.ui.components.LoadingScreen
 import com.example.rickandmortyapp.ui.components.StatusIcon
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
-import com.example.rickandmortyapp.ui.screens.homeScreen.HomeTopAppBar
 
 object HomeDestination : NavigationDestination {
     override val route = "home"

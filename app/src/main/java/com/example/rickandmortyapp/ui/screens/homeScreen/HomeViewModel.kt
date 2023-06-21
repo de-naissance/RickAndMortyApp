@@ -1,4 +1,4 @@
-package com.example.rickandmortyapp.ui
+package com.example.rickandmortyapp.ui.screens.homeScreen
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.rickandmortyapp.ui.AppViewModelProvider
-import com.example.rickandmortyapp.ui.HomeViewModel
+import com.example.rickandmortyapp.ui.screens.homeScreen.HomeViewModel
 
 private val LightColorScheme = lightColorScheme(
     primary = md_theme_light_primary,

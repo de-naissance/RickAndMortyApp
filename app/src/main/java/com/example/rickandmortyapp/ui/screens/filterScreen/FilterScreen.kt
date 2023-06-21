@@ -31,7 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.rickandmortyapp.R
 import com.example.rickandmortyapp.data.SearchFilter
-import com.example.rickandmortyapp.ui.HomeViewModel
+import com.example.rickandmortyapp.ui.screens.homeScreen.HomeViewModel
 import com.example.rickandmortyapp.ui.InformationScreenTopAppBar
 import com.example.rickandmortyapp.ui.navigation.NavigationDestination
 

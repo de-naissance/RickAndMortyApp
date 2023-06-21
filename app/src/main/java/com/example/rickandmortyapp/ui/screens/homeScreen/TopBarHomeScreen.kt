@@ -36,7 +36,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.rickandmortyapp.R
-import com.example.rickandmortyapp.ui.LayoutUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
